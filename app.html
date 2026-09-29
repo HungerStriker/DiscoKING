@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DiscoKING</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand-wrap">
+        <div class="brand-mark">✦</div>
+        <div>
+          <div class="brand-name">DiscoKING</div>
+          <div class="brand-sub">command layer</div>
+        </div>
+      </div>
+
+      <nav class="agent-list">
+        <div class="agent active" data-agent="Hermes">
+          <span class="agent-dot"></span>
+          <div>
+            <strong>Hermes</strong>
+            <small>tools + skills</small>
+          </div>
+        </div>
+        <div class="agent" data-agent="Forgejo">
+          <span class="agent-dot"></span>
+          <div>
+            <strong>Forgejo</strong>
+            <small>repo sync</small>
+          </div>
+        </div>
+        <div class="agent" data-agent="Atlas">
+          <span class="agent-dot"></span>
+          <div>
+            <strong>Atlas</strong>
+            <small>planner</small>
+          </div>
+        </div>
+        <div class="agent" data-agent="Nova">
+          <span class="agent-dot"></span>
+          <div>
+            <strong>Nova</strong>
+            <small>vision</small>
+          </div>
+        </div>
+      </nav>
+
+      <div class="mini-panel">
+        <div class="panel-title">Workspace</div>
+        <div class="workspace-row">
+          <span>Private mode</span>
+          <span class="chip online">ON</span>
+        </div>
+        <div class="workspace-row">
+          <span>Auto mode</span>
+          <span class="chip amber">READY</span>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main-panel">
+      <header class="topbar">
+        <div>
+          <div class="eyebrow">AI control room</div>
+          <h1>Hermes session</h1>
+        </div>
+
+        <div class="top-actions">
+          <button class="ghost-btn" id="logoutBtn">Logout</button>
+          <button class="primary-btn">Launch</button>
+        </div>
+      </header>
+
+      <section class="metrics-row">
+        <div class="metric-box">
+          <span>Living tools</span>
+          <strong>42</strong>
+        </div>
+        <div class="metric-box">
+          <span>Sandbox</span>
+          <strong>Active</strong>
+        </div>
+        <div class="metric-box">
+          <span>Mode</span>
+          <strong>Auto</strong>
+        </div>
+        <div class="metric-box">
+          <span>User</span>
+          <strong id="userDisplay">guest</strong>
+        </div>
+      </section>
+
+      <section class="chat-layout">
+        <div class="chat-panel">
+          <div class="chat-header">
+            <div class="chat-title">Agent flow</div>
+            <div class="chat-status">Connected • live</div>
+          </div>
+
+          <div class="messages" id="messagesBox">
+            <div class="msg assistant">
+              <div class="bubble">
+                Hermes online. Full toolchain available. Sandbox initialized. Models are loaded from the free pool and hidden by design.
+              </div>
+            </div>
+            <div class="msg user">
+              <div class="bubble">
+                Run a project dig and generate a safe sandbox environment with upload/download, private workspace, and auto orchestration.
+              </div>
+            </div>
+            <div class="msg assistant">
+              <div class="bubble">
+                Working on it. I’ve started the task in the sandbox, prepared local file handling, and activated the reputation-safe tool list.
+              </div>
+            </div>
+          </div>
+
+          <form id="composer">
+            <textarea id="promptInput" rows="1" placeholder="Ask Hermes or Forgejo to act..."></textarea>
+            <div class="composer-actions">
+              <div class="tool-pills">
+                <span>Tools</span>
+                <span>Skills</span>
+                <span>Forgejo</span>
+                <span>Sandbox</span>
+              </div>
+              <button type="submit" class="primary-btn small">Send</button>
+            </div>
+          </form>
+        </div>
+
+        <aside class="right-panel">
+          <div class="panel-box sandbox-box">
+            <div class="panel-head">
+              <span>Sandbox</span>
+              <span class="pill blue">Live</span>
+            </div>
+
+            <div class="sandbox-actions">
+              <label class="file-label">
+                Upload
+                <input type="file" id="uploadInput" />
+              </label>
+              <button class="ghost-btn small" id="downloadBtn">Download</button>
+            </div>
+
+            <div class="toggle-row">
+              <span>Auto mode</span>
+              <label class="switch">
+                <input type="checkbox" checked />
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="toggle-row">
+              <span>Private vault</span>
+              <label class="switch">
+                <input type="checkbox" checked />
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="model-box">
+              <div class="panel-head tiny">
+                <span>Free model pool</span>
+                <span class="pill green">Hidden</span>
+              </div>
+              <ul>
+                <li>Pool 01</li>
+                <li>Pool 02</li>
+                <li>Pool 03</li>
+                <li>Pool 04</li>
+                <li>Pool 05</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="panel-box">
+            <div class="panel-head tiny">
+              <span>Toolchain</span>
+              <span class="pill purple">Full</span>
+            </div>
+            <ul class="tool-list">
+              <li>File I/O</li>
+              <li>Runtime shell</li>
+              <li>Repo ops</li>
+              <li>Forgejo sync</li>
+              <li>State memory</li>
+              <li>Safe exec</li>
+            </ul>
+          </div>
+        </aside>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
