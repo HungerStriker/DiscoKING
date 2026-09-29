@@ -1,527 +1,440 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DiscoKING - AI Agent Platform</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DiscoKING</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      font-family: Inter, "Segoe UI", sans-serif;
+      background: linear-gradient(180deg, #9ddcff 0%, #dff5ff 45%, #cfeeff 100%);
+      color: #123a62;
+    }
+    body {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      position: relative;
+    }
+    .sky {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 20% 25%, rgba(255,255,255,0.65), transparent 26%),
+        radial-gradient(circle at 74% 18%, rgba(255,255,255,0.55), transparent 30%),
+        linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0));
+      z-index: 0;
+    }
+    .cloud {
+      position: absolute;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.7);
+      filter: blur(2px);
+      opacity: 0.9;
+      animation: drift 16s ease-in-out infinite;
+    }
+    .cloud.c1 { width: 180px; height: 46px; left: 8%; top: 16%; }
+    .cloud.c2 { width: 220px; height: 52px; right: 12%; top: 18%; animation-delay: 4s; }
+    .cloud.c3 { width: 170px; height: 42px; left: 32%; bottom: 18%; animation-delay: 7s; }
+    @keyframes drift {
+      0%, 100% { transform: translateX(0); }
+      50% { transform: translateX(18px); }
+    }
+    .panel {
+      position: relative;
+      z-index: 1;
+      width: min(940px, 92vw);
+      background: rgba(255,255,255,0.66);
+      border: 1px solid rgba(18, 82, 142, 0.15);
+      border-radius: 28px;
+      box-shadow: 0 30px 85px rgba(36, 96, 161, 0.14);
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 1.02fr 1fr;
+      backdrop-filter: blur(10px);
+    }
+    .left {
+      background: rgba(1, 52, 94, 0.06);
+      padding: 34px 30px 28px;
+      border-right: 1px solid rgba(18, 82, 142, 0.1);
+    }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(180deg, #87CEEB 0%, #E0F6FF 50%, #B0E0E6 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            position: relative;
-        }
+    .spark {
+      width: 96px;
+      height: 96px;
+      margin: 0 auto 18px;
+      position: relative;
+      display: grid;
+      place-items: center;
+      filter: drop-shadow(0 0 24px rgba(255, 214, 92, 0.75));
+    }
 
-        /* Animated clouds background */
-        .cloud {
-            position: absolute;
-            background: white;
-            border-radius: 100px;
-            opacity: 0.7;
-            animation: float 20s infinite;
-        }
+    .spark::before,
+    .spark::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, #fff4a6 0%, #ffd75c 35%, #ffb300 100%);
+      clip-path: polygon(50% 0%, 62% 34%, 100% 50%, 62% 66%, 50% 100%, 38% 66%, 0% 50%, 38% 34%);
+      transform: rotate(12deg);
+      border-radius: 12px;
+    }
 
-        .cloud1 { width: 100px; height: 40px; top: 10%; left: -100px; animation-delay: 0s; }
-        .cloud2 { width: 150px; height: 50px; top: 30%; right: -150px; animation-delay: 5s; }
-        .cloud3 { width: 120px; height: 45px; top: 60%; left: -120px; animation-delay: 10s; }
+    .spark::after {
+      inset: 14px;
+      background: linear-gradient(135deg, #fff7d1 0%, #ffd95d 32%, #ffb700 100%);
+      clip-path: polygon(50% 0%, 62% 34%, 100% 50%, 62% 66%, 50% 100%, 38% 66%, 0% 50%, 38% 34%);
+      transform: rotate(22deg);
+      opacity: 0.9;
+    }
 
-        @keyframes float {
-            0% { transform: translateX(0); }
-            50% { transform: translateX(100px); }
-            100% { transform: translateX(0); }
-        }
+    .spark-core {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #fffdf0 0%, #ffe47d 35%, #ffbb00 100%);
+      box-shadow: 0 0 18px rgba(255, 190, 0, 0.7);
+    }
 
-        .container {
-            display: flex;
-            gap: 40px;
-            width: 100%;
-            max-width: 1000px;
-            padding: 20px;
-            position: relative;
-            z-index: 10;
-        }
-
-        .auth-box {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 25px;
-            box-shadow: 0 25px 70px rgba(0, 100, 200, 0.2);
-            padding: 50px;
-            width: 100%;
-            max-width: 420px;
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(135, 206, 235, 0.3);
-            animation: slideIn 0.6s ease-out;
-        }
-
-        .auth-box.signup {
-            display: none;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .logo-container {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .logo {
-            width: 100px;
-            height: 100px;
-            margin: 0 auto 20px;
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="sparkGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:%23FFD700;stop-opacity:1" /><stop offset="100%" style="stop-color:%23FFA500;stop-opacity:1" /></linearGradient></defs><polygon points="50,10 61,40 90,40 68,60 79,90 50,70 21,90 32,60 10,40 39,40" fill="url(%23sparkGrad)" /><circle cx="50" cy="50" r="35" fill="none" stroke="%23FFD700" stroke-width="2" opacity="0.3" /><circle cx="50" cy="50" r="25" fill="none" stroke="%23FFA500" stroke-width="1.5" opacity="0.5" /></svg>') center/contain no-repeat;
-            filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.6));
-            animation: sparkle 2s ease-in-out infinite;
-        }
-
-        @keyframes sparkle {
-            0%, 100% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.6)); }
-            50% { transform: scale(1.1) rotate(10deg); filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0.9)); }
-        }
-
-        .logo h1 {
-            color: #0066cc;
-            font-size: 36px;
-            font-weight: bold;
-            background: linear-gradient(135deg, #0066cc, #00a8ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 5px;
-        }
-
-        .logo p {
-            color: #0088dd;
-            font-size: 13px;
-            font-weight: 500;
-        }
-
-        .form-group {
-            margin-bottom: 18px;
-        }
-
-        label {
-            display: block;
-            color: #003d7a;
-            font-weight: 600;
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
-
-        input[type="text"],
-        input[type="email"],
-        input[type="password"] {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #b0dff0;
-            border-radius: 10px;
-            font-size: 14px;
-            transition: all 0.3s;
-            background: #f0f8ff;
-        }
-
-        input[type="text"]:focus,
-        input[type="email"]:focus,
-        input[type="password"]:focus {
-            outline: none;
-            border-color: #0066cc;
-            background: white;
-            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
-        }
-
-        .submit-btn {
-            width: 100%;
-            padding: 13px;
-            background: linear-gradient(135deg, #0066cc, #00a8ff);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-weight: 600;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin-top: 15px;
-            box-shadow: 0 5px 20px rgba(0, 102, 204, 0.3);
-        }
-
-        .submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(0, 102, 204, 0.4);
-        }
-
-        .submit-btn:active {
-            transform: translateY(0);
-        }
-
-        .toggle-auth {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 14px;
-        }
-
-        .toggle-auth a {
-            color: #0066cc;
-            cursor: pointer;
-            font-weight: 600;
-            text-decoration: none;
-            border-bottom: 2px solid transparent;
-            transition: all 0.3s;
-        }
-
-        .toggle-auth a:hover {
-            border-bottom-color: #0066cc;
-        }
-
-        .error-message,
-        .success-message {
-            font-size: 14px;
-            margin-top: 15px;
-            padding: 12px;
-            border-radius: 8px;
-            display: none;
-            text-align: center;
-            font-weight: 500;
-            animation: popIn 0.4s ease-out;
-        }
-
-        @keyframes popIn {
-            from {
-                opacity: 0;
-                transform: scale(0.9);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        .error-message {
-            background: #ffe0e0;
-            color: #c0392b;
-            border-left: 4px solid #c0392b;
-            display: none;
-        }
-
-        .error-message.show {
-            display: block;
-        }
-
-        .success-message {
-            background: #e0f7e0;
-            color: #27ae60;
-            border-left: 4px solid #27ae60;
-            display: none;
-        }
-
-        .success-message.show {
-            display: block;
-        }
-
-        .footer {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 12px;
-            color: #0066cc;
-        }
-
-        .privacy-note {
-            background: rgba(0, 102, 204, 0.1);
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 12px;
-            color: #003d7a;
-            margin-top: 15px;
-            border-left: 4px solid #0066cc;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                flex-direction: column;
-            }
-
-            .auth-box {
-                max-width: 100%;
-                padding: 35px 25px;
-            }
-        }
-    </style>
+    .brand {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .brand h1 {
+      margin: 0;
+      font-size: clamp(2.3rem, 3vw, 3.1rem);
+      letter-spacing: 0.06em;
+      background: linear-gradient(135deg, #0f5fa8, #0f8fe2 58%, #4ac3ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .brand p {
+      margin: 10px 0 0;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #215b93;
+    }
+    .info-card {
+      background: rgba(255,255,255,0.36);
+      border: 1px solid rgba(18, 82, 142, 0.1);
+      border-radius: 18px;
+      padding: 18px 18px 16px;
+      color: #123a62;
+    }
+    .info-card h3 {
+      margin: 0 0 12px;
+      font-size: 1rem;
+    }
+    .info-card ul {
+      margin: 0;
+      padding-left: 18px;
+      line-height: 1.7;
+      font-size: 0.96rem;
+      color: #214d78;
+    }
+    .right {
+      padding: 32px 26px 28px;
+      background: rgba(255,255,255,0.18);
+    }
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+    .tab {
+      flex: 1;
+      text-align: center;
+      padding: 10px 12px;
+      background: rgba(12, 101, 179, 0.08);
+      border: 1px solid rgba(18, 82, 142, 0.12);
+      border-radius: 12px;
+      font-weight: 800;
+      color: #123a62;
+      cursor: pointer;
+    }
+    .tab.active {
+      background: linear-gradient(135deg, #0e72ce, #4ac3ff);
+      border-color: transparent;
+      color: white;
+      box-shadow: 0 14px 24px rgba(20, 127, 215, 0.26);
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    label {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: #123a62;
+      font-weight: 700;
+    }
+    input {
+      width: 100%;
+      border: 1px solid rgba(18, 82, 142, 0.2);
+      border-radius: 12px;
+      background: rgba(255,255,255,0.72);
+      padding: 13px 14px;
+      font-size: 0.98rem;
+      color: #123a62;
+      outline: none;
+    }
+    input:focus {
+      border-color: rgba(16, 122, 214, 0.7);
+      box-shadow: 0 0 0 4px rgba(47, 128, 237, 0.12);
+    }
+    .btn {
+      border: none;
+      border-radius: 12px;
+      padding: 14px 18px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn-primary {
+      background: linear-gradient(135deg, #0d62c8, #46b8ff);
+      color: white;
+      box-shadow: 0 16px 30px rgba(20, 102, 179, 0.25);
+    }
+    .helper {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-top: 6px;
+      color: #234f7a;
+      font-size: 0.85rem;
+    }
+    .helper a {
+      color: #0d62c8;
+      text-decoration: none;
+      font-weight: 800;
+    }
+    .msg {
+      display: none;
+      margin-top: 8px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 0.88rem;
+      font-weight: 700;
+    }
+    .msg.error {
+      display: block;
+      background: rgba(231, 76, 60, 0.12);
+      border: 1px solid rgba(231, 76, 60, 0.18);
+      color: #9d2d28;
+    }
+    .msg.success {
+      display: block;
+      background: rgba(39, 174, 96, 0.1);
+      border: 1px solid rgba(39, 174, 96, 0.18);
+      color: #1d7a44;
+    }
+    @media (max-width: 760px) {
+      .panel { grid-template-columns: 1fr; }
+      .left { border-right: none; border-bottom: 1px solid rgba(18, 82, 142, 0.1); }
+    }
+  </style>
 </head>
 <body>
-    <!-- Animated Clouds -->
-    <div class="cloud cloud1"></div>
-    <div class="cloud cloud2"></div>
-    <div class="cloud cloud3"></div>
+  <div class="sky"></div>
+  <div class="cloud c1"></div>
+  <div class="cloud c2"></div>
+  <div class="cloud c3"></div>
 
-    <div class="container">
-        <!-- LOGIN BOX -->
-        <div class="auth-box login" id="loginBox">
-            <div class="logo-container">
-                <div class="logo"></div>
-                <h1>DiscoKING</h1>
-                <p>🎵 AI Agent Platform</p>
-            </div>
-            
-            <form id="loginForm">
-                <div class="form-group">
-                    <label for="login-username">Username</label>
-                    <input 
-                        type="text" 
-                        id="login-username" 
-                        placeholder="Enter username" 
-                        required
-                        autocomplete="off"
-                    >
-                </div>
+  <div class="panel">
+    <div class="left">
+      <div class="spark"><div class="spark-core"></div></div>
+      <div class="brand">
+        <h1>DiscoKING</h1>
+        <p>AI command layer</p>
+      </div>
 
-                <div class="form-group">
-                    <label for="login-password">Password</label>
-                    <input 
-                        type="password" 
-                        id="login-password" 
-                        placeholder="Enter password" 
-                        required
-                        autocomplete="off"
-                    >
-                </div>
-
-                <button type="submit" class="submit-btn">🔓 Login to DiscoKING</button>
-                <div class="error-message" id="loginError"></div>
-            </form>
-
-            <div class="toggle-auth">
-                New user? <a onclick="toggleAuth()">Create Account</a>
-            </div>
-
-            <div class="privacy-note">
-                🔒 <strong>Premium Privacy:</strong> Create an account to unlock private workspace and advanced features.
-            </div>
-
-            <div class="footer">
-                <p>Secure AI Agent Platform v1.0</p>
-                <p style="margin-top: 8px; font-size: 11px;">Admin: majortom</p>
-            </div>
-        </div>
-
-        <!-- SIGNUP BOX -->
-        <div class="auth-box signup" id="signupBox">
-            <div class="logo-container">
-                <div class="logo"></div>
-                <h1>Join DiscoKING</h1>
-                <p>🎵 Create Your Private Space</p>
-            </div>
-            
-            <form id="signupForm">
-                <div class="form-group">
-                    <label for="signup-username">Username</label>
-                    <input 
-                        type="text" 
-                        id="signup-username" 
-                        placeholder="Choose username" 
-                        required
-                        autocomplete="off"
-                    >
-                </div>
-
-                <div class="form-group">
-                    <label for="signup-email">Email</label>
-                    <input 
-                        type="email" 
-                        id="signup-email" 
-                        placeholder="your@email.com" 
-                        required
-                        autocomplete="off"
-                    >
-                </div>
-
-                <div class="form-group">
-                    <label for="signup-password">Password</label>
-                    <input 
-                        type="password" 
-                        id="signup-password" 
-                        placeholder="Create password" 
-                        required
-                        autocomplete="off"
-                    >
-                </div>
-
-                <div class="form-group">
-                    <label for="signup-confirm">Confirm Password</label>
-                    <input 
-                        type="password" 
-                        id="signup-confirm" 
-                        placeholder="Confirm password" 
-                        required
-                        autocomplete="off"
-                    >
-                </div>
-
-                <button type="submit" class="submit-btn">✨ Create Account</button>
-                <div class="error-message" id="signupError"></div>
-                <div class="success-message" id="signupSuccess"></div>
-            </form>
-
-            <div class="toggle-auth">
-                Already have account? <a onclick="toggleAuth()">Login Here</a>
-            </div>
-
-            <div class="privacy-note">
-                🔐 Your data stays private. Premium subscription unlocks advanced AI features and private workspace.
-            </div>
-
-            <div class="footer">
-                <p>Secure AI Agent Platform v1.0</p>
-            </div>
-        </div>
+      <div class="info-card">
+        <h3>Private AI workspace</h3>
+        <ul>
+          <li>Hermes + Forgejo orchestration</li>
+          <li>Sandboxed upload/download control</li>
+          <li>Private vault + auto mode</li>
+          <li>Hidden free model pool</li>
+          <li>Tooling, skills, and repo sync</li>
+        </ul>
+      </div>
     </div>
 
-    <script>
-        // Admin credentials
-        const ADMIN_USER = {
-            username: 'majortom',
-            password: 'sicosico6'
-        };
+    <div class="right">
+      <div class="tabs">
+        <div class="tab active" data-mode="login">Login</div>
+        <div class="tab" data-mode="signup">Sign up</div>
+      </div>
 
-        // Toggle between login and signup
-        function toggleAuth() {
-            document.getElementById('loginBox').classList.toggle('login');
-            document.getElementById('signupBox').classList.toggle('signup');
-            document.getElementById('loginForm').reset();
-            document.getElementById('signupForm').reset();
-            clearErrors();
+      <form id="loginForm">
+        <label>
+          Username
+          <input type="text" id="loginUser" placeholder="Enter username" />
+        </label>
+
+        <label>
+          Password
+          <input type="password" id="loginPass" placeholder="Enter password" />
+        </label>
+
+        <button class="btn btn-primary" type="submit">Unlock</button>
+
+        <div class="helper">
+          <span>Default pass: imdog</span>
+          <a href="#" id="showAdmin">Admin</a>
+        </div>
+
+        <div id="loginMsg" class="msg"></div>
+      </form>
+
+      <form id="signupForm" style="display:none;">
+        <label>
+          Username
+          <input type="text" id="signupUser" placeholder="Choose username" />
+        </label>
+
+        <label>
+          Email
+          <input type="email" id="signupEmail" placeholder="you@example.com" />
+        </label>
+
+        <label>
+          Password
+          <input type="password" id="signupPass" placeholder="Create password" />
+        </label>
+
+        <label>
+          Confirm password
+          <input type="password" id="signupConfirm" placeholder="Confirm password" />
+        </label>
+
+        <button class="btn btn-primary" type="submit">Create account</button>
+        <div id="signupMsg" class="msg"></div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const tabs = document.querySelectorAll('.tab');
+    const loginForm = document.getElementById('loginForm');
+    const signupForm = document.getElementById('signupForm');
+    const loginMsg = document.getElementById('loginMsg');
+    const signupMsg = document.getElementById('signupMsg');
+
+    const DEFAULT_LOGIN = { user: 'guest', password: 'imdog' };
+    const ADMIN = { user: 'majortom', password: 'sicosico6' };
+
+    tabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        tabs.forEach((t) => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        if (tab.dataset.mode === 'login') {
+          loginForm.style.display = 'flex';
+          signupForm.style.display = 'none';
+        } else {
+          loginForm.style.display = 'none';
+          signupForm.style.display = 'flex';
         }
+      });
+    });
 
-        // Clear all error messages
-        function clearErrors() {
-            document.getElementById('loginError').classList.remove('show');
-            document.getElementById('signupError').classList.remove('show');
-            document.getElementById('signupSuccess').classList.remove('show');
-        }
+    document.getElementById('showAdmin').addEventListener('click', (event) => {
+      event.preventDefault();
+      document.getElementById('loginUser').value = ADMIN.user;
+      document.getElementById('loginPass').value = ADMIN.password;
+    });
 
-        // LOGIN HANDLER
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            clearErrors();
+    loginForm.addEventListener('submit', (event) => {
+      event.preventDefault();
 
-            const username = document.getElementById('login-username').value.trim();
-            const password = document.getElementById('login-password').value;
-            const errorEl = document.getElementById('loginError');
+      const user = document.getElementById('loginUser').value.trim();
+      const pass = document.getElementById('loginPass').value;
 
-            // Check against admin credentials
-            if (username === ADMIN_USER.username && password === ADMIN_USER.password) {
-                localStorage.setItem('discoking_authenticated', 'true');
-                localStorage.setItem('discoking_user', username);
-                localStorage.setItem('discoking_role', 'admin');
-                window.location.href = 'app.html';
-                return;
-            }
+      if (!user || !pass) {
+        loginMsg.textContent = 'Please fill in both fields.';
+        loginMsg.className = 'msg error';
+        return;
+      }
 
-            // Check against registered users
-            const users = JSON.parse(localStorage.getItem('discoking_users') || '{}');
-            if (users[username] && users[username].password === password) {
-                localStorage.setItem('discoking_authenticated', 'true');
-                localStorage.setItem('discoking_user', username);
-                localStorage.setItem('discoking_role', 'user');
-                localStorage.setItem('discoking_email', users[username].email);
-                window.location.href = 'app.html';
-                return;
-            }
+      const saved = JSON.parse(localStorage.getItem('discokingUsers') || '{}');
+      const isDefault = user === DEFAULT_LOGIN.user && pass === DEFAULT_LOGIN.password;
+      const isAdmin = user === ADMIN.user && pass === ADMIN.password;
+      const isSavedUser = saved[user] && saved[user].password === pass;
 
-            // Wrong credentials
-            errorEl.textContent = '❌ Invalid username or password';
-            errorEl.classList.add('show');
-            document.getElementById('login-password').value = '';
-            document.getElementById('login-username').focus();
+      if (isDefault || isAdmin || isSavedUser) {
+        localStorage.setItem('discokingAuth', 'true');
+        localStorage.setItem('discokingUser', user);
+        localStorage.setItem('discokingRole', isAdmin ? 'admin' : (isDefault ? 'guest' : 'user'));
+        window.location.href = 'app.html';
+      } else {
+        loginMsg.textContent = 'Invalid username or password.';
+        loginMsg.className = 'msg error';
+      }
+    });
 
-            setTimeout(() => {
-                errorEl.classList.remove('show');
-            }, 4000);
-        });
+    signupForm.addEventListener('submit', (event) => {
+      event.preventDefault();
 
-        // SIGNUP HANDLER
-        document.getElementById('signupForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            clearErrors();
+      const user = document.getElementById('signupUser').value.trim();
+      const email = document.getElementById('signupEmail').value.trim();
+      const pass = document.getElementById('signupPass').value;
+      const confirmPass = document.getElementById('signupConfirm').value;
 
-            const username = document.getElementById('signup-username').value.trim();
-            const email = document.getElementById('signup-email').value.trim();
-            const password = document.getElementById('signup-password').value;
-            const confirm = document.getElementById('signup-confirm').value;
-            const errorEl = document.getElementById('signupError');
-            const successEl = document.getElementById('signupSuccess');
+      if (!user || !email || !pass || !confirmPass) {
+        signupMsg.textContent = 'Complete all fields.';
+        signupMsg.className = 'msg error';
+        return;
+      }
+      if (pass.length < 6) {
+        signupMsg.textContent = 'Password must be at least 6 characters.';
+        signupMsg.className = 'msg error';
+        return;
+      }
+      if (pass !== confirmPass) {
+        signupMsg.textContent = 'Passwords do not match.';
+        signupMsg.className = 'msg error';
+        return;
+      }
 
-            // Validation
-            if (username.length < 3) {
-                errorEl.textContent = '❌ Username must be at least 3 characters';
-                errorEl.classList.add('show');
-                return;
-            }
+      const saved = JSON.parse(localStorage.getItem('discokingUsers') || '{}');
+      if (saved[user]) {
+        signupMsg.textContent = 'Username already exists.';
+        signupMsg.className = 'msg error';
+        return;
+      }
 
-            if (password.length < 6) {
-                errorEl.textContent = '❌ Password must be at least 6 characters';
-                errorEl.classList.add('show');
-                return;
-            }
+      saved[user] = { email, password: pass };
+      localStorage.setItem('discokingUsers', JSON.stringify(saved));
 
-            if (password !== confirm) {
-                errorEl.textContent = '❌ Passwords do not match';
-                errorEl.classList.add('show');
-                return;
-            }
+      signupMsg.textContent = 'Account created successfully. You can now log in.';
+      signupMsg.className = 'msg success';
+      signupForm.reset();
 
-            // Check if username already exists
-            const users = JSON.parse(localStorage.getItem('discoking_users') || '{}');
-            if (users[username]) {
-                errorEl.textContent = '❌ Username already taken';
-                errorEl.classList.add('show');
-                return;
-            }
+      setTimeout(() => {
+        tabs.forEach((t) => t.classList.remove('active'));
+        document.querySelector('.tab[data-mode="login"]').classList.add('active');
+        loginForm.style.display = 'flex';
+        signupForm.style.display = 'none';
+      }, 1200);
+    });
 
-            // Save new user
-            users[username] = {
-                email: email,
-                password: password,
-                created: new Date().toISOString(),
-                role: 'user'
-            };
-
-            localStorage.setItem('discoking_users', JSON.stringify(users));
-
-            // Success
-            successEl.textContent = '✅ Account created! Redirecting to login...';
-            successEl.classList.add('show');
-
-            setTimeout(() => {
-                toggleAuth();
-                document.getElementById('login-username').value = username;
-                document.getElementById('login-username').focus();
-            }, 2000);
-        });
-
-        // Auto-focus on first input
-        document.getElementById('login-username').focus();
-
-        // Check if already authenticated
-        if (localStorage.getItem('discoking_authenticated') === 'true') {
-            window.location.href = 'app.html';
-        }
-    </script>
+    if (localStorage.getItem('discokingAuth') === 'true') {
+      window.location.href = 'app.html';
+    }
+  </script>
 </body>
 </html>
