@@ -292,9 +292,8 @@
 
         <button class="btn btn-primary" type="submit">Unlock</button>
 
-        <div class="helper">
-          <span>Default pass: imdog</span>
-          <a href="#" id="showAdmin">Admin</a>
+        <div class="helper" aria-hidden="true">
+          <span>Private access</span>
         </div>
 
         <div id="loginMsg" class="msg"></div>
@@ -350,12 +349,6 @@
           signupForm.style.display = 'flex';
         }
       });
-    });
-
-    document.getElementById('showAdmin').addEventListener('click', (event) => {
-      event.preventDefault();
-      document.getElementById('loginUser').value = ADMIN.user;
-      document.getElementById('loginPass').value = ADMIN.password;
     });
 
     loginForm.addEventListener('submit', (event) => {
