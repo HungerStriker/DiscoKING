@@ -6,17 +6,17 @@ const logoutBtn = document.getElementById('logoutBtn');
 const uploadInput = document.getElementById('uploadInput');
 const downloadBtn = document.getElementById('downloadBtn');
 
-const currentUser = localStorage.getItem('discoking_user') || 'guest';
+const currentUser = localStorage.getItem('discokingUser') || 'guest';
 userDisplay.textContent = currentUser;
 
-if (localStorage.getItem('discoking_authenticated') !== 'true') {
+if (localStorage.getItem('discokingAuth') !== 'true') {
   window.location.href = 'index.html';
 }
 
 logoutBtn.addEventListener('click', () => {
-  localStorage.removeItem('discoking_authenticated');
-  localStorage.removeItem('discoking_user');
-  localStorage.removeItem('discoking_role');
+  localStorage.removeItem('discokingAuth');
+  localStorage.removeItem('discokingUser');
+  localStorage.removeItem('discokingRole');
   window.location.href = 'index.html';
 });
 
