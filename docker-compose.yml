@@ -1,0 +1,76 @@
+version: "3.9"
+
+services:
+  # Free Local LLM Model Server
+  ollama:
+    image: ollama/ollama:latest
+    container_name: discoking-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ./data/ollama:/root/.ollama
+    environment:
+      OLLAMA_NUM_THREAD: 8
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Free Git Server
+  forgejo:
+    image: forgejo/forgejo:latest
+    container_name: discoking-forgejo
+    environment:
+      USER_UID: 1000
+      USER_GID: 1000
+      FORGEJO__database__DB_TYPE: sqlite3
+      FORGEJO__database__PATH: /data/forgejo.db
+      FORGEJO__server__DOMAIN: localhost
+      FORGEJO__server__HTTP_PORT: 3000
+      FORGEJO__server__ROOT_URL: http://localhost:3000/
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+      - "222:22"
+    volumes:
+      - ./data/forgejo:/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # DiscoKING Backend (Node.js)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: discoking-backend
+    ports:
+      - "5000:5000"
+    environment:
+      PORT: 5000
+      NODE_ENV: development
+      OLLAMA_URL: http://ollama:11434
+      OLLAMA_MODEL: mistral
+      FORGEJO_URL: http://forgejo:3000
+      FORGEJO_TOKEN: ${FORGEJO_TOKEN:-}
+      BACKEND_URL: http://localhost:5000
+    depends_on:
+      ollama:
+        condition: service_healthy
+      forgejo:
+        condition: service_healthy
+    restart: unless-stopped
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    command: npm start
+
+networks:
+  default:
+    name: discoking-network
